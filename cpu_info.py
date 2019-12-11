@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import logging
 import psutil
 import platform
 
@@ -23,10 +24,18 @@ class CPU_info:
         # python version
         major, minor, patchlevel = platform.python_version_tuple()
 
+        # init logging
+        LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+        DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"                    
+        fp = logging.FileHandler('cpu_info.log', mode="w", encoding='utf-8')
+        fs = logging.StreamHandler()
+        logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT,
+                            datefmt=DATE_FORMAT, handlers=[fp, fs])
+        
 
     def dump(self):
-        print(self.cpu_times)
-        print(self.cpu_logical_times)
+        logging.info("cpu num:"+str(self.cpu_times))
+        logging.info("cpu logical num:"+str(self.cpu_logical_times))
 
 
 
