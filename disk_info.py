@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # coding=utf-8
 
+import platform
 from collections import namedtuple
 
 
@@ -18,6 +19,11 @@ class Disk_info:
                      ' 输入输出操作花费的加权毫秒数'
 
         self.disk_lst = []
+
+        if (platform.system() != "Linux"):
+            print("Host os is not supported.")
+            return
+
         with open('/proc/diskstats') as f:
             for line in f:
                 self.disk_lst.append(tuple(line.split()))
