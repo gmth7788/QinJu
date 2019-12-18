@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title | trim}}</title>
+</head>
+<body>
+    <table>
+        <tr>
+        {% for i in tb_title %}
+        <th>{{ i }}</th>
+        {% endfor %}
+        </tr>
+        {% for row in tb_rows %}
+        <tr>
+            {% for col in row %}
+                <td>{{ col }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+

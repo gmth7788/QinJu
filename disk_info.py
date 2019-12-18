@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 # coding=utf-8
 
+import datetime
 import platform
 from collections import namedtuple
-
+from jinja2 import Environment, FileSystemLoader
+import os.path
 
 class Disk_info:
     '''
@@ -22,6 +24,8 @@ class Disk_info:
 
         if (platform.system() != "Linux"):
             print("Host os is not supported.")
+            self.disk_lst = [('253', '1', 'dm-1', '90', '0', '4920', '152', '0', '0', '0', '0', '0', '132','152'),
+                             ('253', '0', 'dm-0', '8603', '0', '720365', '113780', '4409', '0', '84315', '47476', '0', '69038', '161258')]
             return
 
         with open('/proc/diskstats') as f:
@@ -44,22 +48,38 @@ class Disk_info:
         '''
         [print(i) for i in self.disk_lst if device in i]
 
-    def dump(self, file_name=r'./disk_info.csv'):
+    def dump_logs(self, file_name=''):
         '''
         磁盘信息写文件
         :param file_name:
         :return:
         '''
-        with open(file_name, "w") as f:
+        if file_name.strip() == '':
+            file_name = datetime.datetime.now().strftime(
+                './logs/%Y%m%d_%H%M%S_disk_info.csv')
+        with open(file_name, "w", encoding='utf-8') as f:
             # title
             f.write(','.join(self.title.split()) + '\n')
             # content
             for i in self.disk_lst:
                 f.write(','.join(i) + '\n')
 
+    def dump_html(self, file_name='tpl_disk_info.html'):
+        path, fn = os.path.split(__file__)
+        env = Environment(loader=FileSystemLoader(path+'/templates') or './templates')
+        template = env.get_template(file_name)
+        html = template.render(title='aa',
+                               tb_title=self.title.split(),
+                               tb_rows=self.disk_lst)
+        with open(r'./reports/disk_info.html', mode='w',
+                  encoding='utf-8') as f:
+            f.write(html)
+
+
 
 if __name__ == "__main__":
     disk_info = Disk_info()
-    disk_info.disp_all()
-    disk_info.disp('sda')
-    disk_info.dump()
+    # disk_info.disp_all()
+    # disk_info.disp('sda')
+    disk_info.dump_logs()
+    disk_info.dump_html()
