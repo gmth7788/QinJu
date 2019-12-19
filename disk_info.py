@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 # coding=utf-8
 
+import os
 import datetime
 import platform
 from collections import namedtuple
 from jinja2 import Environment, FileSystemLoader
-import os.path
+
+import global_config
 
 class Disk_info:
     '''
@@ -78,6 +80,21 @@ class Disk_info:
                   encoding='utf-8') as f:
             f.write(html)
         '''
+        cfg = global_config.qinju_config()
+        print(cfg.templates_path)
+        print(cfg.reports_path)
+
+        '''
+        env=Environment(loader=FileSystemLoader(cfg.templates_path)
+        template=env.get_template('tpl_disk_info.html')
+
+        html = template.render(title='aa',
+                               tb_title=self.title.split(),
+                               tb_rows=self.disk_lst)
+        with open(r'./reports/disk_info.html', mode='w',
+                  encoding='utf-8') as f:
+            f.write(html)
+        '''
         env=Environment(loader=FileSystemLoader('./templates'))
         template=env.get_template('tpl_disk_info.html')
         html = template.render(title='aa',
@@ -86,7 +103,7 @@ class Disk_info:
         with open(r'./reports/disk_info.html', mode='w',
                   encoding='utf-8') as f:
             f.write(html)
-
+        
                         
 
 
