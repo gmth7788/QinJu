@@ -67,49 +67,39 @@ class Disk_info:
                 f.write(','.join(i) + '\n')
 
     def dump_html(self):
-        '''
-        https://www.programcreek.com/python/index/184/jinja
-        
-        path, fn = os.path.split(__file__)
-        env = Environment(loader=FileSystemLoader(path+'/templates') or './templates')
-        template = env.get_template(file_name)
-        html = template.render(title='aa',
-                               tb_title=self.title.split(),
-                               tb_rows=self.disk_lst)
-        with open(r'./reports/disk_info.html', mode='w',
-                  encoding='utf-8') as f:
-            f.write(html)
-        '''
-        cfg = global_config.qinju_config()
-        print(cfg.templates_path)
-        print(cfg.reports_path)
+        """
+        Templates the given file with the keyword arguments.
 
-        '''
-        env=Environment(loader=FileSystemLoader(cfg.templates_path)
-        template=env.get_template('tpl_disk_info.html')
+        Args:
+        in_file_path: The path to the template
+        out_file_path: The path to output the templated file
+        **kwargs: Variables to use in templating
+        """
+        in_file_path='./templates/tpl_disk_info.html'
+        out_file_path='./reports/disk_info.html'
+        kwargs={'title':'aa',
+              'tb_title':self.title.split(),
+              'tb_rows':self.disk_lst}
+        env = Environment(loader=FileSystemLoader(os.path.dirname(in_file_path)),
+                          keep_trailing_newline=True)
+        template = env.get_template(os.path.basename(in_file_path))
+        output = template.render(**kwargs)
 
-        html = template.render(title='aa',
-                               tb_title=self.title.split(),
-                               tb_rows=self.disk_lst)
-        with open(r'./reports/disk_info.html', mode='w',
-                  encoding='utf-8') as f:
-            f.write(html)
-        '''
-        env=Environment(loader=FileSystemLoader('./templates'))
-        template=env.get_template('tpl_disk_info.html')
-        html = template.render(title='aa',
-                               tb_title=self.title.split(),
-                               tb_rows=self.disk_lst)
-        with open(r'./reports/disk_info.html', mode='w',
-                  encoding='utf-8') as f:
-            f.write(html)
-        
-                        
+        with open(out_file_path, "w") as f:
+            f.write(output) 
+
 
 
 if __name__ == "__main__":
+    cfg = global_config.qinju_config()
+ 
     disk_info = Disk_info()
     # disk_info.disp_all()
     # disk_info.disp('sda')
     disk_info.dump_logs()
     disk_info.dump_html()
+
+
+
+
+    
