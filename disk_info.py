@@ -85,7 +85,7 @@ class Disk_info:
         template = env.get_template(os.path.basename(in_file_path))
         output = template.render(**kwargs)
 
-        with open(out_file_path, "w") as f:
+        with open(out_file_path, mode="w", encoding='utf-8') as f:
             f.write(output) 
 
 
