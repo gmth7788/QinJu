@@ -16,6 +16,8 @@ class Disk_info:
     '''
 
     def __init__(self):
+        self.cfg = global_config.qinju_config()
+
         self.title = '主设备号 次设备号 设备名称' \
                      ' 读次数 合并读次数 读扇区次数 读花费的毫秒数' \
                      ' 写次数 合并写次数 写扇区次数 写操作花费的毫秒数' \
@@ -75,17 +77,15 @@ class Disk_info:
         out_file_path: The path to output the templated file
         **kwargs: Variables to use in templating
         """
-        in_file_path='./templates/tpl_disk_info.html'
-        out_file_path='./reports/disk_info.html'
-        kwargs={'title':'aa',
-              'tb_title':self.title.split(),
-              'tb_rows':self.disk_lst}
-        env = Environment(loader=FileSystemLoader(os.path.dirname(in_file_path)),
+        env = Environment(loader=FileSystemLoader(os.path.dirname(self.cfg.tpl_disk_info)),
                           keep_trailing_newline=True)
-        template = env.get_template(os.path.basename(in_file_path))
+        template = env.get_template(os.path.basename(self.cfg.tpl_disk_info))
+        kwargs = {'title': 'aa',
+                  'tb_title': self.title.split(),
+                  'tb_rows': self.disk_lst}
         output = template.render(**kwargs)
 
-        with open(out_file_path, mode="w", encoding='utf-8') as f:
+        with open(self.cfg.rpt_disk_info, mode="w", encoding='utf-8') as f:
             f.write(output) 
 
 
@@ -94,8 +94,8 @@ if __name__ == "__main__":
     cfg = global_config.qinju_config()
  
     disk_info = Disk_info()
-    # disk_info.disp_all()
-    # disk_info.disp('sda')
+    disk_info.disp_all()
+    disk_info.disp('sda')
     disk_info.dump_logs()
     disk_info.dump_html()
 
