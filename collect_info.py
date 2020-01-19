@@ -55,7 +55,7 @@ class collect_info:
         查看安装的软件版本和路径
         :return:
         '''
-        self.exec_tpl('powershell "Get-WmiObject -class Win32_product | Select-Object -Property name, version"')
+        # self.exec_tpl('powershell "Get-WmiObject -class Win32_product | Select-Object -Property name, version"')
         self.exec_tpl("wmic product get name,version")
 
     def get_local_service(self):
@@ -89,6 +89,20 @@ class collect_info:
         self.exec_tpl("schtasks /query /fo LIST /v")
         os.system("chcp 936")
 
+    def get_statistics(self):
+        '''
+        查看主机开机时间
+        :return:
+        '''
+        self.exec_tpl("net statistics workstation")
+
+    def get_user_list(self):
+        '''
+        查看用户列表
+        :return:
+        '''
+        self.exec_tpl("net user")
+
     def execute_tqdm(self):
         '''
         tqdm执行进度
@@ -99,17 +113,17 @@ class collect_info:
             pbar.update()
             self.get_ipconfig()  # 1s
 
-            # pbar.set_description("get_os()")
-            # pbar.update()
-            # self.get_os()  # 8s
+            pbar.set_description("get_os()")
+            pbar.update()
+            self.get_os()  # 8s
 
             pbar.set_description("get_arch()")
             pbar.update()
             self.get_arch()  # 1s
 
-            # pbar.set_description("get_software()")
-            # pbar.update()
-            # self.get_software() # s
+            pbar.set_description("get_software()")
+            pbar.update()
+            self.get_software() # s
 
             pbar.set_description("get_local_service()")
             pbar.update()
@@ -126,6 +140,14 @@ class collect_info:
             pbar.set_description("get_schedual()")
             pbar.update()
             self.get_schedual()  # 1s
+
+            pbar.set_description("get_statistics()")
+            pbar.update()
+            self.get_statistics()  # 1s
+
+            pbar.set_description("get_user_list()")
+            pbar.update()
+            self.get_user_list()  # 1s
 
 
 if __name__ == "__main__":
