@@ -27,8 +27,6 @@ class collect_info:
 >>> s2
 '"reg" "query" ""HKEY_CURRENT_USER"\\"Software"\\"Microsoft"\\"Windows"\\"Curren
 tVersion"\\"Internet" "Settings""  ""abc" "bbc""  "123" ""cd" "aaa"" "12s" "23"'
-
-
         :param cmd_line:
         :return:
         '''
@@ -165,7 +163,48 @@ tVersion"\\"Internet" "Settings""  ""abc" "bbc""  "123" ""cd" "aaa"" "12s" "23"'
         查看代理配置
         :return:
         '''
-        self.exec_tpl('reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings"')
+        self.of.write("\n" * 3 + "*" * 40 + "\n")
+        self.of.write('reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings"')
+        self.of.flush()
+        ret = subprocess.call(['reg',
+                               'query',
+                               "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings"],
+                              stdin=None,
+                              stdout=self.of,
+                              stderr=None,
+                              shell=False)
+
+    def get_rdp(self):
+        '''
+        查看远程连接服务（RDP，3389）
+        :return:
+        '''
+        self.of.write("\n" * 3 + "*" * 40 + "\n")
+        self.of.write(
+            'reg query "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /V PortNumber')
+        self.of.flush()
+        ret = subprocess.call(['reg',
+                               'query',
+                               "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp",
+                               "/V",
+                               "PortNumber"],
+                              stdin=None,
+                              stdout=self.of,
+                              stderr=None,
+                              shell=False)
+
+    def get_active_host(self):
+        '''
+        探测存活主机
+        todo: 调用批处理
+        :return:
+        '''
+        pass
+        # self.of.write("\n" * 3 + "*" * 40 + "\n")
+        # self.of.write(
+        #     'for /l %I in (1,1,254) do @ping -w 1 -n 1 10.0.37.%I |findstr "TTL="')
+        # os.system('for /l %I in (1,1,254) do @ping -w 1 -n 1 10.0.37.%I |findstr "TTL=" >> ./collect_info.txt')
+
 
     def execute_tqdm(self):
         '''
@@ -176,7 +215,7 @@ tVersion"\\"Internet" "Settings""  ""abc" "bbc""  "123" ""cd" "aaa"" "12s" "23"'
             with tqdm.tqdm() as pbar:
                 pbar.set_description("get_ipconfig()")
                 pbar.update()
-                self.get_ipconfig()  
+                self.get_ipconfig()
 
                 pbar.set_description("get_os()")
                 pbar.update()
@@ -184,47 +223,47 @@ tVersion"\\"Internet" "Settings""  ""abc" "bbc""  "123" ""cd" "aaa"" "12s" "23"'
 
                 pbar.set_description("get_arch()")
                 pbar.update()
-                self.get_arch()  
+                self.get_arch()
 
                 pbar.set_description("get_software()")
                 pbar.update()
-                self.get_software() # s
+                self.get_software()  # s
 
                 pbar.set_description("get_local_service()")
                 pbar.update()
-                self.get_local_service()  
+                self.get_local_service()
 
                 pbar.set_description("get_task()")
                 pbar.update()
-                self.get_task()  
+                self.get_task()
 
                 pbar.set_description("get_startup()")
                 pbar.update()
-                self.get_startup()  
+                self.get_startup()
 
                 pbar.set_description("get_schedual()")
                 pbar.update()
-                self.get_schedual()  
+                self.get_schedual()
 
                 pbar.set_description("get_statistics()")
                 pbar.update()
-                self.get_statistics()  
+                self.get_statistics()
 
                 pbar.set_description("get_user_list()")
                 pbar.update()
-                self.get_user_list()  
+                self.get_user_list()
 
                 pbar.set_description("get_session()")
                 pbar.update()
-                self.get_session()  
+                self.get_session()
 
                 pbar.set_description("get_netstat()")
                 pbar.update()
-                self.get_netstat()  
+                self.get_netstat()
 
                 pbar.set_description("get_share()")
                 pbar.update()
-                self.get_share()  
+                self.get_share()
 
                 pbar.set_description("get_firewall()")
                 pbar.update()
@@ -234,11 +273,17 @@ tVersion"\\"Internet" "Settings""  ""abc" "bbc""  "123" ""cd" "aaa"" "12s" "23"'
                 pbar.update()
                 self.get_proxy()
 
+                pbar.set_description("get_rdp()")
+                pbar.update()
+                self.get_rdp()
+
+                pbar.set_description("get_active_host()")
+                pbar.update()
+                self.get_active_host()
 
 
         except Exception as e:
-            print("发生异常"+e)
-
+            print("发生异常" + e)
 
 
 if __name__ == "__main__":
